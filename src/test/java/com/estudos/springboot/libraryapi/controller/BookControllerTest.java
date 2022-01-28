@@ -3,6 +3,7 @@ package com.estudos.springboot.libraryapi.controller;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.estudos.springboot.libraryapi.dto.BookDTO;
 import com.estudos.springboot.libraryapi.entity.Book;
+import com.estudos.springboot.libraryapi.exception.BusinessException;
 import com.estudos.springboot.libraryapi.service.BookService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -59,7 +61,31 @@ class BookControllerTest {
 
 	@Test
 	@DisplayName("Deve lançar erro de validação")
-	void createInvalidBookTest() {
+	void createInvalidBookTest() throws Exception {
+
+		String json = new ObjectMapper().writeValueAsString(new BookDTO());
+
+		var request = MockMvcRequestBuilders.post(BOOK_API).contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON).content(json);
+
+		mvc.perform(request).andExpect(status().isBadRequest()).andExpect(jsonPath("errors", Matchers.hasSize(3)));
+
+	}
+
+	@Test
+	@DisplayName("Deve lançar erro ao criar livro com isbn já cadastrado")
+	void shouldThrowExceptionWhenIsbnIsExistInDatabase() throws Exception {
+
+		String json = new ObjectMapper().writeValueAsString(dto);
+
+		String exceptionMessage = "Isbn já cadastrado";
+		BDDMockito.given(service.save(Mockito.any(Book.class))).willThrow(new BusinessException(exceptionMessage));
+
+		var request = MockMvcRequestBuilders.post(BOOK_API).contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON).content(json);
+
+		mvc.perform(request).andExpect(status().isBadRequest()).andExpect(jsonPath("errors", Matchers.hasSize(1)))
+				.andExpect(jsonPath("errors[0]").value(exceptionMessage));
 
 	}
 
