@@ -3,6 +3,8 @@ package com.estudos.springboot.libraryapi.controller;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Optional;
+
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -89,4 +91,33 @@ class BookControllerTest {
 
 	}
 
+	@Test
+	@DisplayName("Deve obter informacoes de um livro")
+	void getBookDetailsTest() throws Exception {
+
+		var id = 1l;
+
+		var book = Book.builder().id(id).title("Title").author("Author").isbn("123").build();
+		BDDMockito.given(service.getById(id)).willReturn(Optional.of(book));
+
+		var request = MockMvcRequestBuilders.get(BOOK_API.concat("/" + id)).accept(MediaType.APPLICATION_JSON);
+
+		mvc.perform(request).andExpect(jsonPath("id").value(1l)).andExpect(jsonPath("id").value(1l))
+				.andExpect(jsonPath("title").value(book.getTitle()))
+				.andExpect(jsonPath("author").value(book.getAuthor()))
+				.andExpect(jsonPath("isbn").value(book.getIsbn()));
+
+	}
+
+	@Test
+	@DisplayName("Deve retornar resource not found quando o livro procurado nao existir")
+	void bookNotFoundTest() throws Exception {
+
+		var id = 1l;
+
+		BDDMockito.given(service.getById(Mockito.anyLong())).willReturn(Optional.empty());
+		var request = MockMvcRequestBuilders.get(BOOK_API.concat("/" + id)).accept(MediaType.APPLICATION_JSON);
+		mvc.perform(request).andExpect(status().isNotFound());
+
+	}
 }

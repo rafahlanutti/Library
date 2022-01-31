@@ -1,5 +1,7 @@
 package com.estudos.springboot.libraryapi.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,11 @@ public class BookServiceImpl implements BookService {
 		}
 
 		return repository.save(book);
+	}
+
+	@Override
+	public Optional<Book> getById(long id) {
+		return null;
 	}
 
 }
