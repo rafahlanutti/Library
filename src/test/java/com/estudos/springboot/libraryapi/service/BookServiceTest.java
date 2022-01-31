@@ -36,7 +36,7 @@ public class BookServiceTest {
 	void saveBookTest() {
 
 		var book = createBook();
-		Mockito.when(repository.existByIsbn(Mockito.anyString())).thenReturn(false);
+		Mockito.when(repository.existsByIsbn(Mockito.anyString())).thenReturn(false);
 		Mockito.when(repository.save(book))
 				.thenReturn(Book.builder().id(1l).author("Author").title("title").isbn("123123").build());
 
@@ -57,7 +57,7 @@ public class BookServiceTest {
 	void shouldNotSaveBookABookWithDuplicateISBN() {
 		Book createBook = createBook();
 
-		Mockito.when(repository.existByIsbn(Mockito.anyString())).thenReturn(true);
+		Mockito.when(repository.existsByIsbn(Mockito.anyString())).thenReturn(true);
 		var exception = assertThrows(BusinessException.class, () -> {
 			service.save(createBook);
 		});

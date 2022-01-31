@@ -8,6 +8,6 @@ import com.estudos.springboot.libraryapi.entity.Book;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
 
-	boolean existByIsbn(String isbn);
+	boolean existsByIsbn(String isbn);
 
 }
