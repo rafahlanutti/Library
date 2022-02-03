@@ -1,12 +1,12 @@
 package com.estudos.springboot.libraryapi.service;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.estudos.springboot.libraryapi.entity.Book;
 import com.estudos.springboot.libraryapi.exception.BusinessException;
+import com.estudos.springboot.libraryapi.exception.ObjectNotFoundException;
 import com.estudos.springboot.libraryapi.repository.BookRepository;
 
 @Service
@@ -30,8 +30,26 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
-	public Optional<Book> getById(long id) {
-		return null;
+	public Book getById(long id) {
+
+		return repository.findById(id)
+				.orElseThrow(() -> new ObjectNotFoundException(HttpStatus.NOT_FOUND, "Objeto não encontrado"));
+
+	}
+
+	@Override
+	public void delete(Long id) {
+
+		var book = this.getById(id);
+		this.repository.delete(book);
+
+	}
+
+	@Override
+	public Book update(Book updated) {
+		this.getById(updated.getId());
+		return this.repository.save(updated);
+
 	}
 
 }
