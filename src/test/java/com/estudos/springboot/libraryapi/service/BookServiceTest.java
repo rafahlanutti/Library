@@ -119,6 +119,7 @@ public class BookServiceTest {
 		var bookUpdate = createBook(1l);
 		var ex = assertThrows(ObjectNotFoundException.class, () -> service.update(bookUpdate));
 		assertEquals("404 NOT_FOUND \"Objeto n�o encontrado\"", ex.getMessage());
+		Mockito.verify(repository, Mockito.never()).save(createBook(1l));
 
 	}
 
@@ -144,6 +145,7 @@ public class BookServiceTest {
 		Mockito.when(repository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
 		var ex = assertThrows(ObjectNotFoundException.class, () -> service.delete(1l));
 		assertEquals("404 NOT_FOUND \"Objeto n�o encontrado\"", ex.getMessage());
+		Mockito.verify(repository, Mockito.never()).delete(createBook(1l));
 
 	}
 }
