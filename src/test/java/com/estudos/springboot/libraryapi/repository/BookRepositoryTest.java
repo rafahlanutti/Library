@@ -1,5 +1,6 @@
 package com.estudos.springboot.libraryapi.repository;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -29,11 +30,13 @@ class BookRepositoryTest {
 	@DisplayName("Deve retornar verdadeiro quando existir um livro na base com isbn informado")
 	void returnTrueWhenIsbnExists() {
 		String isbn = "123";
-		var savedBook = Book.builder().author("Rafael").title("Estudo com lombok").isbn(isbn).build();
-		entityManager.persist(savedBook);
-
+		createBook(isbn);
 		var exists = repository.existsByIsbn(isbn);
 		assertTrue(exists);
+	}
+
+	private Book createBook(String isbn) {
+		return entityManager.persist(Book.builder().author("Rafael").title("Estudo com lombok").isbn(isbn).build());
 	}
 
 	@Test
@@ -44,4 +47,16 @@ class BookRepositoryTest {
 		var exists = repository.existsByIsbn(isbn);
 		assertFalse(exists);
 	}
+
+	@Test
+	@DisplayName("Deve retornar um livro por id")
+	void getById() {
+		var created = createBook("123");
+
+		var finded = repository.findById(created.getId());
+		assertTrue(finded.isPresent());
+		assertEquals(created.getId(), finded.get().getId());
+
+	}
+
 }

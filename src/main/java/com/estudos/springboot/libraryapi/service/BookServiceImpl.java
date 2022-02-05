@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.estudos.springboot.libraryapi.entity.Book;
 import com.estudos.springboot.libraryapi.exception.BusinessException;
 import com.estudos.springboot.libraryapi.exception.ObjectNotFoundException;
+import com.estudos.springboot.libraryapi.messages.Messages;
 import com.estudos.springboot.libraryapi.repository.BookRepository;
 
 @Service
@@ -23,7 +24,7 @@ public class BookServiceImpl implements BookService {
 	public Book save(Book book) {
 
 		if (repository.existsByIsbn(book.getIsbn())) {
-			throw new BusinessException("Isbn já cadastrado");
+			throw new BusinessException(Messages.ISNB_NOT_ALLOW.toString());
 		}
 
 		return repository.save(book);
@@ -33,7 +34,7 @@ public class BookServiceImpl implements BookService {
 	public Book getById(long id) {
 
 		return repository.findById(id)
-				.orElseThrow(() -> new ObjectNotFoundException(HttpStatus.NOT_FOUND, "Objeto não encontrado"));
+				.orElseThrow(() -> new ObjectNotFoundException(HttpStatus.NOT_FOUND, Messages.NOT_FOUND.toString()));
 
 	}
 
