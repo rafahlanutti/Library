@@ -1,6 +1,8 @@
 package com.estudos.springboot.libraryapi.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -51,6 +53,11 @@ public class BookServiceImpl implements BookService {
 		this.getById(updated.getId());
 		return this.repository.save(updated);
 
+	}
+
+	@Override
+	public Page<Book> find(Book filter, Pageable pageable) {
+		return null;
 	}
 
 }
