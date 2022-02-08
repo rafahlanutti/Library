@@ -1,5 +1,7 @@
 package com.estudos.springboot.libraryapi.service;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,4 +18,6 @@ public interface BookService {
 	public Book update(Book book);
 
 	public Page<Book> find(Book filter, Pageable pageable);
+
+	public Optional<Book> getBookByIsbn(String string);
 }

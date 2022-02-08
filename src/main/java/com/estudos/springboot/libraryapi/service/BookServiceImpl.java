@@ -1,5 +1,7 @@
 package com.estudos.springboot.libraryapi.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -62,6 +64,11 @@ public class BookServiceImpl implements BookService {
 		Example<Book> example = Example.of(filter, ExampleMatcher.matching().withIgnoreCase().withIgnoreNullValues()
 				.withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING));
 		return repository.findAll(example, pageable);
+	}
+
+	@Override
+	public Optional<Book> getBookByIsbn(String string) {
+		return null;
 	}
 
 }
