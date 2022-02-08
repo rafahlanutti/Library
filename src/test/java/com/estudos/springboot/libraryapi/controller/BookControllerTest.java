@@ -203,9 +203,7 @@ class BookControllerTest {
 
 		mvc.perform(request).andExpect(status().isOk()).andExpect(jsonPath("content", Matchers.hasSize(1)))
 				.andExpect(jsonPath("totalElements").value(1)).andExpect(jsonPath("pageable.pageSize").value(100))
-				.andExpect(jsonPath("pageable.pageNumber").value(0))
-
-		;
+				.andExpect(jsonPath("pageable.pageNumber").value(0));
 	}
 
 }

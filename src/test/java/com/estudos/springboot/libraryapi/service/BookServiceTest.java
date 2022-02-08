@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +16,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -146,6 +151,27 @@ public class BookServiceTest {
 		var ex = assertThrows(ObjectNotFoundException.class, () -> service.delete(1l));
 		assertEquals("404 NOT_FOUND \"Objeto n�o encontrado\"", ex.getMessage());
 		Mockito.verify(repository, Mockito.never()).delete(createBook(1l));
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	@DisplayName("Deve filtrar livro")
+	void findBookTest() {
+
+		var book = createBook(1l);
+		var pageRequest = PageRequest.of(0, 10);
+		List<Book> lista = Collections.singletonList(book);
+		var page = new PageImpl<Book>(lista, pageRequest, 1);
+
+		Mockito.when(repository.findAll(Mockito.any(Example.class), Mockito.any(PageRequest.class))).thenReturn(page);
+
+		var result = service.find(book, pageRequest);
+
+		assertEquals(1, result.getTotalElements());
+		assertEquals(lista, result.getContent());
+		assertEquals(0, result.getPageable().getPageNumber());
+		assertEquals(10, result.getPageable().getPageSize());
 
 	}
 }
