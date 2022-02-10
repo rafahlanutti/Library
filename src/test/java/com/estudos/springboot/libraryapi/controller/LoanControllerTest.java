@@ -4,8 +4,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +24,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.estudos.springboot.libraryapi.dto.LoanDTO;
 import com.estudos.springboot.libraryapi.entity.Book;
 import com.estudos.springboot.libraryapi.entity.Loan;
+import com.estudos.springboot.libraryapi.exception.BusinessException;
+import com.estudos.springboot.libraryapi.exception.ObjectNotFoundException;
 import com.estudos.springboot.libraryapi.service.BookService;
 import com.estudos.springboot.libraryapi.service.LoanService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,7 +55,7 @@ class LoanControllerTest {
 		String json = new ObjectMapper().writeValueAsString(dto);
 
 		Book book = Book.builder().id(1l).isbn("123").build();
-		BDDMockito.given(service.getBookByIsbn("123")).willReturn(Optional.of(book));
+		BDDMockito.given(service.getBookByIsbn("123")).willReturn(book);
 
 		Loan loan = Loan.builder().id(1l).custumer("fulano").book(book).loanDate(LocalDate.now()).build();
 		BDDMockito.given(loanService.save(Mockito.any(Loan.class))).willReturn(loan);
@@ -61,7 +63,44 @@ class LoanControllerTest {
 		var request = MockMvcRequestBuilders.post(LOAN_API).accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON).content(json);
 
-		mvc.perform(request).andExpect(status().isCreated()).andExpect(jsonPath("id").value(1l));
+		mvc.perform(request).andExpect(status().isOk()).andExpect(jsonPath("id").value(1l));
+
+	}
+
+	@Test
+	@DisplayName("Deve dar erro ao tentar fazer emprestimo de um livro inexistente")
+	void invalidIsbnCreateLoan() throws Exception {
+		LoanDTO dto = LoanDTO.builder().isbn("1234").customer("Fulano").build();
+		String json = new ObjectMapper().writeValueAsString(dto);
+
+		String exceptionMessage = "Book not found for passed isbn";
+		BDDMockito.given(service.getBookByIsbn("1234")).willThrow(new ObjectNotFoundException(exceptionMessage));
+
+		var request = MockMvcRequestBuilders.post(LOAN_API).accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON).content(json);
+
+		mvc.perform(request).andExpect(status().isNotFound()).andExpect(jsonPath("errors", Matchers.hasSize(1)))
+				.andExpect(jsonPath("errors[0]").value(exceptionMessage));
+
+	}
+
+	@Test
+	@DisplayName("Deve dar erro ao tentar fazer emprestimo de um livro emprestado")
+	void lonedBookErrorOnCreateLoan() throws Exception {
+		LoanDTO dto = LoanDTO.builder().isbn("1234").customer("Fulano").build();
+		String json = new ObjectMapper().writeValueAsString(dto);
+
+		Book book = Book.builder().id(1l).isbn("123").build();
+		BDDMockito.given(service.getBookByIsbn("123")).willReturn(book);
+
+		BDDMockito.given(loanService.save(Mockito.any(Loan.class)))
+				.willThrow(new BusinessException("Book already loadned"));
+
+		var request = MockMvcRequestBuilders.post(LOAN_API).accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON).content(json);
+
+		mvc.perform(request).andExpect(status().isBadRequest()).andExpect(jsonPath("errors", Matchers.hasSize(1)))
+				.andExpect(jsonPath("errors[0]").value("Book already loadned"));
 
 	}
 

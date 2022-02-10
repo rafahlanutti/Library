@@ -34,7 +34,6 @@ public class BookController {
 
 	@Autowired
 	public BookController(BookService service, ModelMapper modelMapper) {
-		super();
 		this.service = service;
 		this.modelMapper = modelMapper;
 	}

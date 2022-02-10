@@ -17,7 +17,7 @@ public class ApiErrors {
 		allErrors.forEach(error -> this.errors.add(error.getDefaultMessage()));
 	}
 
-	public ApiErrors(BusinessException ex) {
+	public ApiErrors(Exception ex) {
 		this.errors.add(ex.getMessage());
 	}
 

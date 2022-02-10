@@ -1,13 +1,10 @@
 package com.estudos.springboot.libraryapi.service;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.estudos.springboot.libraryapi.entity.Book;
@@ -39,8 +36,7 @@ public class BookServiceImpl implements BookService {
 	@Override
 	public Book getById(long id) {
 
-		return repository.findById(id)
-				.orElseThrow(() -> new ObjectNotFoundException(HttpStatus.NOT_FOUND, Messages.NOT_FOUND.toString()));
+		return repository.findById(id).orElseThrow(() -> new ObjectNotFoundException(Messages.NOT_FOUND.toString()));
 
 	}
 
@@ -67,8 +63,9 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
-	public Optional<Book> getBookByIsbn(String string) {
-		return null;
+	public Book getBookByIsbn(String string) {
+		return this.repository.findById(1l)
+				.orElseThrow(() -> new ObjectNotFoundException(Messages.NOT_FOUND.toString()));
 	}
 
 }

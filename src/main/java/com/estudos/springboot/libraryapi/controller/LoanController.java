@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +21,9 @@ import com.estudos.springboot.libraryapi.service.LoanService;
 @RequestMapping("/api/loans")
 public class LoanController {
 
-	private final LoanService loanService;
-	private final BookService bookService;
-	private final ModelMapper modelMapper;
+	private LoanService loanService;
+	private BookService bookService;
+	private ModelMapper modelMapper;
 
 	@Autowired
 	public LoanController(LoanService loanService, BookService bookService, ModelMapper modelMapper) {
@@ -33,12 +34,14 @@ public class LoanController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public LoanDTO create(@RequestBody LoanDTO dto) {
+	public ResponseEntity<LoanDTO> create(@RequestBody LoanDTO dto) {
 		var book = bookService.getBookByIsbn(dto.getIsbn());
-		Loan entity = Loan.builder().book(book.get()).custumer(dto.getCustomer()).loanDate(LocalDate.now()).build();
+
+		Loan entity = Loan.builder().book(book).custumer(dto.getCustomer()).loanDate(LocalDate.now()).build();
+
 		entity = loanService.save(entity);
 
-		return modelMapper.map(entity, LoanDTO.class);
+		return ResponseEntity.ok(modelMapper.map(entity, LoanDTO.class));
 	}
 
 }

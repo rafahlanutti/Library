@@ -18,7 +18,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -121,7 +120,7 @@ class BookControllerTest {
 		var id = 1l;
 
 		BDDMockito.given(service.getById(Mockito.anyLong()))
-				.willThrow(new ObjectNotFoundException(HttpStatus.NOT_FOUND, "Objeto não encontrado"));
+				.willThrow(new ObjectNotFoundException("Objeto não encontrado"));
 		var request = MockMvcRequestBuilders.get(BOOK_API.concat("/" + id)).accept(MediaType.APPLICATION_JSON);
 		mvc.perform(request).andExpect(status().isNotFound());
 
@@ -142,8 +141,7 @@ class BookControllerTest {
 	@DisplayName("Deve retornar um erro quando deletar um livro que não existe.")
 	void dontHaveDeleteBookTest() throws Exception {
 
-		Mockito.doThrow(new ObjectNotFoundException(HttpStatus.NOT_FOUND, "Objeto não encontrado")).when(service)
-				.delete(Mockito.anyLong());
+		Mockito.doThrow(new ObjectNotFoundException("Objeto não encontrado")).when(service).delete(Mockito.anyLong());
 
 		var request = MockMvcRequestBuilders.delete(BOOK_API.concat("/" + 1l)).accept(MediaType.APPLICATION_JSON);
 		mvc.perform(request).andExpect(status().isNotFound());
@@ -176,8 +174,7 @@ class BookControllerTest {
 	void dontHaveUpdateBookTest() throws Exception {
 		var book = Book.builder().id(1l).title("Title Updated").author("Author Updated").isbn("123").build();
 
-		BDDMockito.given(service.update(Mockito.any()))
-				.willThrow(new ObjectNotFoundException(HttpStatus.NOT_FOUND, "Objeto não encontrado"));
+		BDDMockito.given(service.update(Mockito.any())).willThrow(new ObjectNotFoundException("Objeto não encontrado"));
 
 		var json = new ObjectMapper().writeValueAsBytes(book);
 

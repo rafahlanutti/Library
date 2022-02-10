@@ -2,7 +2,6 @@ package com.estudos.springboot.libraryapi.exception;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.hibernate.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -28,9 +27,9 @@ public class ValidateExceptionHandler {
 	}
 
 	@ExceptionHandler(ObjectNotFoundException.class)
-	public ResponseEntity<ObjectNotFoundException> handleObjectNotFoundExceptions(ObjectNotFoundException ex,
+	public ResponseEntity<ApiErrors> handleObjectNotFoundExceptions(ObjectNotFoundException ex,
 			HttpServletRequest request) {
 
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex);
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiErrors(ex));
 	}
 }
