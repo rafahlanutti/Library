@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
 
 import java.util.Collections;
 import java.util.List;
@@ -172,6 +173,23 @@ public class BookServiceTest {
 		assertEquals(lista, result.getContent());
 		assertEquals(0, result.getPageable().getPageNumber());
 		assertEquals(10, result.getPageable().getPageSize());
+
+	}
+
+	@Test
+	@DisplayName("Deve obter um book pelo isbn")
+	void getBookIsbnTest() {
+
+		var book = createBook(1l);
+		Mockito.when(repository.findByIsbn(Mockito.anyString())).thenReturn(Optional.of(book));
+
+		var finded = service.getBookByIsbn(book.getIsbn());
+
+		assertEquals(book.getId(), finded.getId());
+		assertEquals(book.getAuthor(), finded.getAuthor());
+		assertEquals(book.getIsbn(), finded.getIsbn());
+
+		Mockito.verify(repository, times(1)).findByIsbn(Mockito.anyString());
 
 	}
 }
