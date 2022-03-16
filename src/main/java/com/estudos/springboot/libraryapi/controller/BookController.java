@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -25,18 +24,15 @@ import com.estudos.springboot.libraryapi.dto.BookDTO;
 import com.estudos.springboot.libraryapi.entity.Book;
 import com.estudos.springboot.libraryapi.service.BookService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("/api/books")
+@RequiredArgsConstructor
 public class BookController {
 
-	private BookService service;
-	private ModelMapper modelMapper;
-
-	@Autowired
-	public BookController(BookService service, ModelMapper modelMapper) {
-		this.service = service;
-		this.modelMapper = modelMapper;
-	}
+	private final BookService service;
+	private final ModelMapper modelMapper;
 
 	@GetMapping("/{id}")
 	public BookDTO get(@PathVariable Long id) {

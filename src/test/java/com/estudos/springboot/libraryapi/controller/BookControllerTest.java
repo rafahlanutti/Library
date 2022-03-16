@@ -29,6 +29,7 @@ import com.estudos.springboot.libraryapi.entity.Book;
 import com.estudos.springboot.libraryapi.exception.BusinessException;
 import com.estudos.springboot.libraryapi.exception.ObjectNotFoundException;
 import com.estudos.springboot.libraryapi.service.BookService;
+import com.estudos.springboot.libraryapi.service.LoanService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ExtendWith(SpringExtension.class)
@@ -42,6 +43,9 @@ class BookControllerTest {
 
 	@MockBean
 	BookService service;
+
+	@MockBean
+	LoanService loanService;
 
 	static String BOOK_API = "/api/books";
 	private BookDTO dto = BookDTO.builder().author("Rafael").title("Estudo com lombok").isbn("123123").build();

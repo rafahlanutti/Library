@@ -32,6 +32,7 @@ import com.estudos.springboot.libraryapi.repository.BookRepository;
 @ActiveProfiles("test")
 public class BookServiceTest {
 
+	
 	private BookService service;
 
 	@MockBean
