@@ -2,7 +2,6 @@ package com.estudos.springboot.libraryapi.entity;
 
 import java.time.LocalDate;
 
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -30,7 +29,7 @@ public class Loan {
 	private Long id;
 
 	@Column
-	private String custumer;
+	private String customer;
 
 	@JoinColumn(name = "id_book")
 	@ManyToOne

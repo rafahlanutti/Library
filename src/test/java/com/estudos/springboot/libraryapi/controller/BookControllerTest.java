@@ -189,22 +189,22 @@ class BookControllerTest {
 
 	}
 
-	@Test
-	@DisplayName("Deve filtrar livros")
-	void filterBookTest() throws Exception {
-		long id = 1l;
-		var book = Book.builder().id(id).title("Title Updated").author("Author Updated").isbn("123").build();
-
-		BDDMockito.given(service.find(Mockito.any(Book.class), Mockito.any(Pageable.class)))
-				.willReturn(new PageImpl<Book>(Collections.singletonList(book), PageRequest.of(0, 100), 1));
-
-		var queryString = String.format("?title=%s&author=%s&page=0&size=100", book.getTitle(), book.getAuthor());
-
-		var request = MockMvcRequestBuilders.get(BOOK_API.concat(queryString)).accept(MediaType.APPLICATION_JSON);
-
-		mvc.perform(request).andExpect(status().isOk()).andExpect(jsonPath("content", Matchers.hasSize(1)))
-				.andExpect(jsonPath("totalElements").value(1)).andExpect(jsonPath("pageable.pageSize").value(100))
-				.andExpect(jsonPath("pageable.pageNumber").value(0));
-	}
+		@Test
+		@DisplayName("Deve filtrar livros")
+		void filterBookTest() throws Exception {
+			long id = 1l;
+			var book = Book.builder().id(id).title("Title Updated").author("Author Updated").isbn("123").build();
+	
+			BDDMockito.given(service.find(Mockito.any(Book.class), Mockito.any(Pageable.class)))
+					.willReturn(new PageImpl<Book>(Collections.singletonList(book), PageRequest.of(0, 100), 1));
+	
+			var queryString = String.format("?title=%s&author=%s&page=0&size=100", book.getTitle(), book.getAuthor());
+	
+			var request = MockMvcRequestBuilders.get(BOOK_API.concat(queryString)).accept(MediaType.APPLICATION_JSON);
+	
+			mvc.perform(request).andExpect(status().isOk()).andExpect(jsonPath("content", Matchers.hasSize(1)))
+					.andExpect(jsonPath("totalElements").value(1)).andExpect(jsonPath("pageable.pageSize").value(100))
+					.andExpect(jsonPath("pageable.pageNumber").value(0));
+		}
 
 }
