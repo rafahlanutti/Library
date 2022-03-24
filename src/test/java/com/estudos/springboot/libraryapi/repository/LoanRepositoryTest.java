@@ -62,6 +62,34 @@ class LoanRepositoryTest {
 
 	}
 
+	@Test
+	@DisplayName("Deve obter empréstimo cuja data emprestimo for menor ou igual a tres dias atras e não retornados")
+	void findByLoanDateLessThanAndNotReturnedTest() {
+
+		var book = createBook("123");
+		entityManager.persist(book);
+
+		Loan loan = Loan.builder().book(book).customer("Fulano").loanDate(LocalDate.now().minusDays(5)).build();
+		entityManager.persist(loan);
+
+		var result = repository.findByLoanDateLessThanAndNotReturned(LocalDate.now().minusDays(4));
+		assertEquals(1, result.size());
+	}
+
+	@Test
+	@DisplayName("Não deve obter empréstimos sem emprestimos atrasados.")
+	void shouldNotFindByLoanDateLessThanAndNotReturnedTest() {
+
+		var book = createBook("123");
+		entityManager.persist(book);
+
+		Loan loan = Loan.builder().book(book).customer("Fulano").loanDate(LocalDate.now()).build();
+		entityManager.persist(loan);
+
+		var result = repository.findByLoanDateLessThanAndNotReturned(LocalDate.now().minusDays(4));
+		assertEquals(0, result.size());
+	}
+
 	private Book createBook(String isbn) {
 		return Book.builder().author("Rafael").title("Estudo com lombok").isbn(isbn).build();
 	}

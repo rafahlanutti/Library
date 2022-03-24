@@ -21,8 +21,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.estudos.springboot.libraryapi.dto.BookDTO;
+import com.estudos.springboot.libraryapi.dto.LoanDTO;
 import com.estudos.springboot.libraryapi.entity.Book;
+import com.estudos.springboot.libraryapi.entity.Loan;
 import com.estudos.springboot.libraryapi.service.BookService;
+import com.estudos.springboot.libraryapi.service.LoanService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 public class BookController {
 
 	private final BookService service;
+	private final LoanService loanService;
 	private final ModelMapper modelMapper;
 
 	@GetMapping("/{id}")
@@ -73,6 +77,23 @@ public class BookController {
 				.collect(Collectors.toList());
 
 		return new PageImpl<>(list, pageRequest, result.getTotalElements());
+	}
+
+	@GetMapping("{id}/loans")
+	public Page<LoanDTO> loansByBook(@PathVariable Long id, Pageable pageable) {
+
+		Book entity = service.getById(id);
+		Page<Loan> loans = loanService.getLoansByBook(entity, pageable);
+		var loansDTO = loans.getContent().stream().map(loan -> {
+			var loanBook = loan.getBook();
+			var bookDTO = modelMapper.map(loanBook, BookDTO.class);
+			var loanDTO = modelMapper.map(loan, LoanDTO.class);
+			loanDTO.setBook(bookDTO);
+			return loanDTO;
+		}).collect(Collectors.toList());
+
+		return new PageImpl<>(loansDTO, pageable, loans.getTotalElements());
+
 	}
 
 }

@@ -36,6 +36,9 @@ public class Loan {
 	private Book book;
 
 	@Column
+	private String customerEmail;
+
+	@Column
 	private LocalDate loanDate;
 
 	@Column
