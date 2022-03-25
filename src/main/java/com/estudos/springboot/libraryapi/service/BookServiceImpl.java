@@ -16,7 +16,7 @@ import com.estudos.springboot.libraryapi.repository.BookRepository;
 @Service
 public class BookServiceImpl implements BookService {
 
-	private BookRepository repository;
+	private final BookRepository repository;
 
 	@Autowired
 	public BookServiceImpl(BookRepository repository) {
