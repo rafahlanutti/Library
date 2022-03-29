@@ -28,10 +28,12 @@ import com.estudos.springboot.libraryapi.service.BookService;
 import com.estudos.springboot.libraryapi.service.LoanService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/books")
 @RequiredArgsConstructor
+@Slf4j
 public class BookController {
 
 	private final BookService service;
@@ -40,7 +42,7 @@ public class BookController {
 
 	@GetMapping("/{id}")
 	public BookDTO get(@PathVariable Long id) {
-
+		log.info("GET LIVROS");
 		return modelMapper.map(service.getById(id), BookDTO.class);
 
 	}
@@ -56,6 +58,7 @@ public class BookController {
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> delete(@PathVariable Long id) {
+		log.info("DELETE LIVROS");
 		service.delete(id);
 
 		return ResponseEntity.noContent().build();
@@ -63,6 +66,7 @@ public class BookController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<BookDTO> update(@PathVariable Long id, @RequestBody BookDTO dto) {
+		log.info("PUT DE LIVRO");
 		var book = modelMapper.map(dto, Book.class);
 		return ResponseEntity.ok(modelMapper.map(service.update(book), BookDTO.class));
 
@@ -71,6 +75,7 @@ public class BookController {
 	@GetMapping
 	public Page<BookDTO> find(BookDTO dto, Pageable pageRequest) {
 
+		log.info("GET DE LIVROS");
 		var filter = modelMapper.map(pageRequest, Book.class);
 		Page<Book> result = service.find(filter, pageRequest);
 		var list = result.getContent().stream().map(entity -> modelMapper.map(entity, BookDTO.class))

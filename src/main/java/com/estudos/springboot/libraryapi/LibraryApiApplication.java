@@ -8,21 +8,16 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.estudos.springboot.libraryapi.service.EmailService;
 
-@Configuration
-@EnableAutoConfiguration
-@EnableConfigurationProperties
-@ComponentScan
 @SpringBootApplication
 @ComponentScan(basePackages = "com.estudos.springboot.libraryapi")
 @EnableScheduling
+@EnableAutoConfiguration
 public class LibraryApiApplication {
 
 	@Autowired
